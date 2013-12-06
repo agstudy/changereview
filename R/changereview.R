@@ -11,7 +11,7 @@ reshape.change  <- function(fileName){
 	DT <- dat[,	 `:=` ( updated = as.POSIXct(strftime(updated, "%Y-%m-%d %H:%M:%OS0")),
 											created = as.POSIXct(strftime(created, "%Y-%m-%d %H:%M:%OS0")))
 						]
-	DT <- dat[status == 'MERGED' & !grepl('api$',project)
+	DT <- DT[status == 'MERGED' & !grepl('api$',project)
 						][,`:=` ( duration = as.numeric(updated - created),
 											proj.family = {
 												ll <- strsplit(project,'-')
@@ -33,16 +33,37 @@ plot.change <- function(fileName){
 		ggtitle('Distribution of change duration')
 	
 	p2 <- ggplot(DT, aes(owner, project)) + 
-		geom_tile(aes(fill = duration)) + 
+		geom_tile(aes(fill = log(duration))) + 
 		theme(axis.text.x=element_text(angle=90)) +
 		scale_fill_gradient(low = "blue",  high = "red")
 	
-	print(p1)
-	print(p2)
-	list(histo=p1,
-			 heatmap=p2)
-}
+	p3 <- ggplot(DT,aes(x=owner,y=duration)) + 
+		geom_point() +
+		stat_summary(fun.data = "mean_sdl", geom = "linerange",
+								 colour = "red", size = 2, mult = 1) +
+		theme_bw() + theme(axis.text.x=element_text(angle=90)) +
+		scale_y_log10()
+	
+	p3 <- ggplot(DT,aes(x=project,y=log(duration))) + 
+		geom_point() +
+		stat_summary(fun.data = "mean_sdl", geom = "linerange",
+								 colour = "red", size = 2, mult = 1) +
+		theme_bw() + theme(axis.text.x=element_text(angle=90)) +
+		scale_y_log10()
+	
+	p4 <- ggplot(DT,aes(x=project,y=log(duration))) + 
+		geom_point() +
+		stat_summary(fun.data = "mean_cl_boot", geom = "linerange",
+								 colour = "green", size = 2, mult = 1) +
+		theme_bw() + theme(axis.text.x=element_text(angle=90)) 
+	
+	
 
+	list(histo_duration=p1,
+			 heatmap=p2,
+			 users_sdl=p3,
+			 project_cl_boot=p4)
+}
 
 
 
