@@ -2,7 +2,7 @@
   [
     {
       "kind": "gerritcodereview#change",
-      "id": "ul-alarm-desk-api~master~I26b1f25987a0482e647ac309aaa847429b0d8266",
+      "id": "I26b1f25987a0482e647ac309aaa847429b0d8266",
       "project": "some-project",
       "branch": "master",
       "change_id": "I26b1f25987a0482e647ac309aaa847429b0d8266",
